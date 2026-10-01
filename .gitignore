@@ -1,0 +1,7 @@
+__pycache__/
+*.py
+.vscode/
+.idea/
+venv/
+*.mp4
+*.avi
