@@ -113,7 +113,7 @@ def main():
         print("="*30)
         print("1. Process live camera feed")
         print("2. Process video file")
-        print("3. Export video file to .mp4 [Note: This feature is still in development]")
+        print("3. Export video file to .mp4")
         print("4. Exit")
 
         choice = input("Enter your choice (1-4): ")
