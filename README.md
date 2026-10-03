@@ -6,8 +6,8 @@ COVERT is a modular, Python-based computer vision tool designed for automated fa
 ## Features
 The system operates via a Command Line Interface (CLI) offering three main operational modes:
 1. **Live Camera Preview:** Real-time face detection and censorship via webcam.
-2. **Video File Preview:** On-the-fly censorship of local `.mp4` video files.
-3. **Export Censored Video:** Headless processing that reads an input video, applies blackout censorship to all detected faces, and exports the result to a new `.mp4` file.
+2. **Video File Preview:** On-the-fly censorship of local video files.
+3. **Export Censored Video:** Headless processing that reads an input video, applies blackout censorship to all detected faces, and exports the result to a new file.
 
 ## Technology Stack
 * **Language:** Python 3.x
@@ -16,14 +16,14 @@ The system operates via a Command Line Interface (CLI) offering three main opera
 
 ## Roadmap (Future Improvements)
 - [x] Core processing engine and CLI interface implementation.
-- [x] Live camera and offline video file support.
+- [x] Live camera and offline `.mp4` video file support.
 - [ ] Model upgrade: Replace Haar Cascades with a modern model to accurately detect faces from multiples angles and profiles
--
-
+- [ ] Universal Format Support: Expand input/output compatibility beyond `.mp4` to `.avi`, `.mov`, and `.mkv`.
+- [ ] Audio Obfuscation: Implement audio extraction, voice distortion (pitch shifting), and re-muxing to ensure total identity protection (tone/voice masking).
 ## Quick Start
 1. **Clone the repository:**
 ```bash
-git clone [soon]
+git clone [https://github.com/AFForge/covert-vision.git](https://github.com/AFForge/covert-vision.git)
 cd covert-vision
 ```
 2. **Install dependencies:**
