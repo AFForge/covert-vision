@@ -1,10 +1,15 @@
 import cv2
 import sys
+import os
 from censor import censor_faces
 
 def process_live_camera():
+    """
+    (Option 1)
+    Processes the live camera feed and censors detected faces.
+    """
     cap = cv2.VideoCapture(0)
-
+    # Check if the camera opened successfully
     if not cap.isOpened():
         print("Error: Could not open camera.")
         return
@@ -26,14 +31,44 @@ def process_live_camera():
     cap.release()
     cv2.destroyAllWindows()
 
+def process_video_preview():
+    """
+    (Option 2)
+    Processes a video file and censors detected faces in a preview window.
+    """
+    filepath = input("Enter the path to the video file: ")
+
+    # Check if the file exists
+    if not os.path.isfile(filepath):
+        print("Error: File does not exist.")
+        return
+    
+    cap = cv2.VideoCapture(filepath)
+    print("[INFO] Video file opened. Press 'q' to quit.")
+
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            print("[INFO] End of video file reached.")
+            break
+
+        censored_frame = censor_faces(frame)
+        cv2.imshow('C.O.V.E.R.T. = Censorship Operations & Video Encrypted Real-Time Tracking', censored_frame)
+
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
+    cap.release()
+    cv2.destroyAllWindows()
+
 def main():
     while True:
         print("\n" + "="*30)
         print("C.O.V.E.R.T. = Censorship Operations & Video Encrypted Real-Time Tracking")
         print("="*30)
         print("1. Process live camera feed")
-        print("2.Process video file [Still in development]")
-        print("3. Export video file to .mp4 [Still in development]")
+        print("2. Process video file")
+        print("3. Export video file to .mp4 [Note: This feature is still in development]")
         print("4. Exit")
 
         choice = input("Enter your choice (1-4): ")
@@ -41,7 +76,7 @@ def main():
         if choice == '1':
             process_live_camera()
         elif choice == '2':
-            print("Video file processing is still in development.")
+            process_video_preview()
         elif choice == '3':
             print("Exporting video file to .mp4 is still in development.")
         elif choice == '4':
