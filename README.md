@@ -17,7 +17,8 @@ The system operates via a Command Line Interface (CLI) offering three main opera
 ## Roadmap (Future Improvements)
 - [x] Core processing engine and CLI interface implementation.
 - [x] Live camera and offline `.mp4` video file support.
-- [ ] Model upgrade: Replace Haar Cascades with a modern model to accurately detect faces from multiples angles and profiles
+- [x] Model upgrade: Replace Haar Cascades with a modern model(MediaPipe Tasks API) to accurately detect faces from multiples angles and profiles
+- [ ] Advanced detection model upgrade: Migrate to YOLOv8 for robust long-range and background face detection.
 - [ ] Universal Format Support: Expand input/output compatibility beyond `.mp4` to `.avi`, `.mov`, and `.mkv`.
 - [ ] Audio Obfuscation: Implement audio extraction, voice distortion (pitch shifting), and re-muxing to ensure total identity protection (tone/voice masking).
 ## Quick Start
