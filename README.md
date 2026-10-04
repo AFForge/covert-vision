@@ -37,3 +37,7 @@ python main.py
 
 ## Privacy Notice
 This tool is designed with privacy in mind. All video processing is done locally on your machine. No video data or telemetry is sent to external servers.
+
+## Acknowledgments & Third-Party Licenses
+This project utilizes the [MediaPipe](https://github.com/google/mediapipe) library and the BlazeFace model, developed by Google LLC. These components are licensed under the **Apache License 2.0**. 
+Early iterations of this tool utilized OpenCV's Haar Cascade Classifiers.
