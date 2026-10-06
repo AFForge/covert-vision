@@ -3,6 +3,27 @@ import sys
 import os
 from censor import censor_faces
 
+def get_optimal_format(output_filepath):
+    """
+    Determines the optimal format code based on the output file extension.
+    """
+    base_name, ext = os.path.splitext(output_filepath)
+    ext = ext.lower()
+
+    if ext == '.mp4':
+        fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # MPEG-4
+        return fourcc, output_filepath
+    elif ext == '.mkv':
+        fourcc = cv2.VideoWriter_fourcc(*'X264')  # H.264
+        return fourcc, output_filepath
+    
+    else:
+        print(f"[WARNING] Unsupported output format '{ext}'. Defaulting to .mp4.")
+        output_filepath = base_name + '.mp4'
+        fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # MPEG-4
+        return fourcc, output_filepath
+    
+
 def process_live_camera(style):
     """
     (Option 1)
@@ -64,14 +85,14 @@ def process_video_preview(style):
 def process_video_export(style):
     """
     (Option 3)
-    Exports a video file to .mp4 format. 
+    Exports a video file to the format specified by the user's output extension.
     """
-    filepath = input("Enter the path to the video file: ").strip()
+    filepath = input("Enter the path to the input video file: ").strip()
 
     if not os.path.isfile(filepath):
         print("Error: File does not exist.")
         return
-    output_filepath = input("Enter the output path for the .mp4 file: ").strip()
+    output_filepath = input("Enter the output path for the file: ").strip()
 
     cap = cv2.VideoCapture(filepath)
 
@@ -81,10 +102,10 @@ def process_video_export(style):
     height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
     #Define the codec and create VideoWriter object
-    fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # Codec for .mp4
+    fourcc, output_filepath = get_optimal_format(output_filepath)
     out = cv2.VideoWriter(output_filepath, fourcc, fps, (width, height))
 
-    print("[INFO] Exporting video to .mp4.(please be patient, this may take some time depending on the video length)")
+    print(f"[INFO] Exporting video to {output_filepath}.(please be patient, this may take some time depending on the video length)")
 
     frame_count = 0
     while True:
@@ -131,7 +152,7 @@ def main():
             print("Select an option:")
             print("1. Process live camera feed")
             print("2. Process video file")
-            print("3. Export video file to .mp4")
+            print("3. Export video file to choosen extension")
             print("4. Exit")
 
             choice = input("Enter your choice (1-4): ").strip()
