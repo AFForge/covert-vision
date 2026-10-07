@@ -26,7 +26,7 @@ def censor_faces(frame, style):
     """
     # Convert the frame to RGB format as YOLOv8 expects RGB images
     frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-    results = model.predict(frame, conf=0.35, verbose=False)
+    results = model.predict(frame, conf=0.25, verbose=False)
     
     for result in results:
         boxes = result.boxes

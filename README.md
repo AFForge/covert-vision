@@ -21,7 +21,7 @@ The system operates via a Command Line Interface (CLI) offering three main opera
 - [x] Advanced detection model upgrade: Migrate to YOLOv8 for robust long-range and background face detection.
 - [x] Add pixelation mosaic option alongside black box face censorship
 - [x] Universal Format Support: Expand input/output compatibility beyond `.mp4` to `.avi`, `.mov`, and `.mkv`.
-- [ ] Audio Obfuscation: Implement audio extraction, voice distortion (pitch shifting), and re-muxing to ensure total identity protection (tone/voice masking).
+- [x] Audio Obfuscation: Implement audio extraction, voice distortion (pitch shifting), and re-muxing to ensure total identity protection (tone/voice masking).
 ## Quick Start
 1. **Clone the repository:**
 ```bash

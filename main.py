@@ -2,6 +2,8 @@ import cv2
 import sys
 import os
 from censor import censor_faces
+from moviepy import VideoFileClip, AudioFileClip
+from audio_censor import audio_censor
 
 def get_optimal_format(output_filepath):
     """
@@ -94,6 +96,9 @@ def process_video_export(style):
         return
     output_filepath = input("Enter the output path for the file: ").strip()
 
+    temp_video_path = "temp_video.mp4"
+    temp_audio_path = "temp_audio.wav"
+
     cap = cv2.VideoCapture(filepath)
 
     #Retrieve the original video's properties needed for VideoWriter
@@ -105,7 +110,7 @@ def process_video_export(style):
     fourcc, output_filepath = get_optimal_format(output_filepath)
     out = cv2.VideoWriter(output_filepath, fourcc, fps, (width, height))
 
-    print(f"[INFO] Exporting video to {output_filepath}.(please be patient, this may take some time depending on the video length)")
+    print(f"[INFO] Step 1: Exporting video to {output_filepath}.(please be patient, this may take some time depending on the video length)")
 
     frame_count = 0
     while True:
@@ -124,7 +129,49 @@ def process_video_export(style):
 
     cap.release()
     out.release()
-    print(f"[INFO] Video exported to {output_filepath} successfully.")
+    print(f"[INFO] Step 2: Extracting and anonymizing audio.")
+    try:
+        # Extract audio from the original video
+        video_clip = VideoFileClip(filepath)
+        audio_clip = video_clip.audio
+        audio_clip.write_audiofile(temp_audio_path, codec='pcm_s16le')  # Export as WAV
+
+        # Censor the extracted audio
+        if audio_censor(temp_audio_path):
+            print("[INFO] Audio anonymization completed successfully.")
+            print("[INFO] Step 3: Merging anonymized audio with the censored video.")
+
+            final_output_filepath = output_filepath
+            merged_output_filepath = os.path.splitext(final_output_filepath)[0] + "_merged" + os.path.splitext(final_output_filepath)[1]
+
+            if os.path.exists(merged_output_filepath):
+                os.remove(merged_output_filepath)
+
+            video_clip = VideoFileClip(output_filepath)
+            audio_clip = AudioFileClip(temp_audio_path)
+            merged_clip = video_clip.with_audio(audio_clip)
+            merged_clip.write_videofile(
+                merged_output_filepath,
+                codec='libx264',
+                audio_codec='aac',
+                fps=video_clip.fps,
+                logger=None,
+            )
+
+            video_clip.close()
+            audio_clip.close()
+            merged_clip.close()
+
+            if os.path.exists(merged_output_filepath):
+                os.replace(merged_output_filepath, final_output_filepath)
+                print(f"[INFO] Final export saved to {final_output_filepath}")
+            else:
+                print("[ERROR] Final merge failed: output file was not created.")
+        else:
+            print("[ERROR] Audio anonymization failed.")
+
+    except Exception as e:
+        print(f"[ERROR] Failed to extract or process audio: {e}")
 
 
 def main():
