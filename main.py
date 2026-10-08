@@ -174,7 +174,10 @@ def process_video_export(style):
         print(f"[ERROR] Failed to extract or process audio: {e}")
         
     finally:
-        # Sprzątanie plików tymczasowych
+        # Clean up temporary files
+        if os.path.exists(temp_video_path):
+            os.remove(temp_video_path)
+            print(f"[INFO] Removed temporary file: {temp_video_path}")
         if os.path.exists(temp_audio_path):
             os.remove(temp_audio_path)
             print(f"[INFO] Removed temporary file: {temp_audio_path}")

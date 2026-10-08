@@ -1,4 +1,6 @@
 opencv-python
 ultralytics
 moviepy
-pydub
+soundfile
+pedalboard
+
