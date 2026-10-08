@@ -7,13 +7,13 @@ COVERT is a modular, Python-based computer vision tool designed for automated fa
 The system operates via a Command Line Interface (CLI) offering three main operational modes:
 1. **Live Camera Preview:** Real-time face detection and censorship via webcam.
 2. **Video File Preview:** On-the-fly censorship of local video files.
-3. **Export Censored Video:** Headless processing that reads an input video, applies blackout censorship to all detected faces, and exports the result to a new file.
+3. **Export Censored Video:** Headless processing that reads an input video, applies visual face censorship, extracts and heavily anonymizes audio (pitch-shifting voice masking), and re-muxes the result into a fully processed video file with automatic temporary file cleanup.
 
 ## Technology Stack
 * **Language:** Python 3.x
 * **Computer Vision:** OpenCV (`cv2`)
-* **Detection Model:** Haar Cascade Classifiers (Frontal Face)
-
+* **Audio Anonymization:** Spotify `pedalboard` (Pitch-shifting & frequency filtering), `soundfile`
+* **Video & Audio Re-muxing:** MoviePy 2.0+
 ## Roadmap (Future Improvements)
 - [x] Core processing engine and CLI interface implementation.
 - [x] Live camera and offline `.mp4` video file support.
@@ -44,4 +44,5 @@ This tool is designed with privacy in mind. All video processing is done locally
 This project incorporates open-source models and libraries:
 * YOLOv8 framework by Ultralytics (AGPL-3.0 License).
 * YOLOv8-Face fine-tuned model hosted on Hugging Face.
+* Spotify Pedalboard for high-quality audio DSP effects.
 * Early iterations utilized OpenCV Haar Cascades and Google MediaPipe Tasks API.
