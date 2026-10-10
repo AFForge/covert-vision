@@ -1,19 +1,24 @@
+# Python cache & build
 __pycache__/
 *.pyc
+*.py[cod]
+*$py.class
+.DS_Store
+Thumbs.db
+
+# IDEs & Environments
 .vscode/
 .idea/
 .venv/
 venv/
 env/
-*.mp4
-*.avi
+
+# Media output & temporary files
 *.mp4
 *.avi
 *.mkv
 *.mov
+
+# AI Models & weights
 *.tflite
 *.pt
-.DS_Store
-Thumbs.db
-*.py[cod]
-*$py.class

@@ -8,6 +8,10 @@ The system operates via a Command Line Interface (CLI) offering three main opera
 1. **Live Camera Preview:** Real-time face detection and censorship via webcam.
 2. **Video File Preview:** On-the-fly censorship of local video files.
 3. **Export Censored Video:** Headless processing that reads an input video, applies visual face censorship, extracts and heavily anonymizes audio (pitch-shifting voice masking), and re-muxes the result into a fully processed video file with automatic temporary file cleanup.
+4. **Metadata & OSD Management:**
+   - **Mode 0:** Clean export (keeps original metadata, no overlay).
+   - **Mode 1:** Tactical Bodycam OSD overlay (burns timestamp, device ID, and mock GPS coordinates directly onto video frames).
+   - **Mode 2:** Anti-Forensics mode (strips all container metadata and digital footprints via FFmpeg).
 
 ## Technology Stack
 * **Language:** Python 3.x
@@ -22,6 +26,7 @@ The system operates via a Command Line Interface (CLI) offering three main opera
 - [x] Add pixelation mosaic option alongside black box face censorship
 - [x] Universal Format Support: Expand input/output compatibility beyond `.mp4` to `.avi`, `.mov`, and `.mkv`.
 - [x] Audio Obfuscation: Implement audio extraction, voice distortion (pitch shifting), and re-muxing to ensure total identity protection (tone/voice masking).
+- [x] Anti-Forensics & Tactical OSD: 3-mode metadata control (Overlay burn / Metadata wipe).
 ## Quick Start
 1. **Clone the repository:**
 ```bash
@@ -43,6 +48,6 @@ This tool is designed with privacy in mind. All video processing is done locally
 ## Acknowledgments & Third-Party Licenses
 This project incorporates open-source models and libraries:
 * YOLOv8 framework by Ultralytics (AGPL-3.0 License).
-* YOLOv8-Face fine-tuned model hosted on Hugging Face.
+* YOLOv8-Face fine-tuned model hosted on Hugging Face made by Deepghs.
 * Spotify Pedalboard for high-quality audio DSP effects.
 * Early iterations utilized OpenCV Haar Cascades and Google MediaPipe Tasks API.

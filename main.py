@@ -4,6 +4,31 @@ import os
 from censor import censor_faces
 from moviepy import VideoFileClip, AudioFileClip
 from audio_censor import audio_censor
+from datetime import datetime
+
+def apply_tactical_osd(frame):
+    """
+    Applies a tactical on-screen display (OSD) to the given frame. This includes a timestamp and a watermark.
+    """
+
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    lines = [
+        f"Timestamp: {timestamp}",
+        "C.O.V.E.R.T. = Censorship Operations & Video Encrypted Real-Time Tracking",
+    ]
+
+    overlay = frame.copy()
+    cv2.rectangle(overlay, (0, 0), (frame.shape[1], 60), (0, 0, 0), -1)  # Black rectangle for OSD background
+    cv2.addWeighted(overlay, 0.5, frame, 0.5, 0, frame)  # Blend the overlay with the original frame
+
+    y_offset = 20
+    for line in lines:
+        cv2.putText(frame, line, (10, y_offset), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 1)
+        y_offset += 15
+
+    return frame
+
 
 def get_optimal_format(output_filepath):
     """
@@ -26,7 +51,7 @@ def get_optimal_format(output_filepath):
         return fourcc, output_filepath
     
 
-def process_live_camera(style):
+def process_live_camera(style, osd_mode):
     """
     (Option 1)
     Processes the live camera feed and censors detected faces.
@@ -47,6 +72,10 @@ def process_live_camera(style):
 
         censored_frame = censor_faces(frame, style)
 
+        # Apply tactical OSD if the user selected that option
+        if osd_mode == 2:
+            censored_frame = apply_tactical_osd(censored_frame)
+
         cv2.imshow('C.O.V.E.R.T. = Censorship Operations & Video Encrypted Real-Time Tracking', censored_frame)
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -54,7 +83,7 @@ def process_live_camera(style):
     cap.release()
     cv2.destroyAllWindows()
 
-def process_video_preview(style):
+def process_video_preview(style, osd_mode):
     """
     (Option 2)
     Processes a video file and censors detected faces in a preview window.
@@ -76,6 +105,11 @@ def process_video_preview(style):
             break
 
         censored_frame = censor_faces(frame, style)
+
+        # Apply tactical OSD if the user selected that option
+        if osd_mode == 2:
+            censored_frame = apply_tactical_osd(censored_frame)
+
         cv2.imshow('C.O.V.E.R.T. = Censorship Operations & Video Encrypted Real-Time Tracking', censored_frame)
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -84,7 +118,7 @@ def process_video_preview(style):
     cap.release()
     cv2.destroyAllWindows()
 
-def process_video_export(style):
+def process_video_export(style, osd_mode):
     """
     (Option 3)
     Exports a video file to the format specified by the user's output extension.
@@ -120,6 +154,11 @@ def process_video_export(style):
             break
 
         censored_frame = censor_faces(frame, style)
+
+        # Apply tactical OSD if the user selected that option
+        if osd_mode == 2:
+            censored_frame = apply_tactical_osd(censored_frame)
+
         out.write(censored_frame)
 
         frame_count += 1
@@ -150,12 +189,20 @@ def process_video_export(style):
             video_clip = VideoFileClip(output_filepath)
             audio_clip = AudioFileClip(temp_audio_path)
             merged_clip = video_clip.with_audio(audio_clip)
+
+            ffmpeg_parameters = []
+            if osd_mode == 3:
+                print("[INFO] Stripping all metadata from the final output.")
+                ffmpeg_parameters = ['-map_metadata', '-1']  # This will strip all metadata
+
+
             merged_clip.write_videofile(
                 merged_output_filepath,
                 codec='libx264',
                 audio_codec='aac',
                 fps=video_clip.fps,
                 logger=None,
+                ffmpeg_params=ffmpeg_parameters if ffmpeg_parameters else None
             )
 
             video_clip.close()
@@ -189,7 +236,7 @@ def main():
         print("C.O.V.E.R.T. = Censorship Operations & Video Encrypted Real-Time Tracking")
         print("="*30)
 
-
+        # Prompt user to select a censorship style
         while True:
             print("Select a censorship style:")
             print("1. Blackout")
@@ -203,7 +250,21 @@ def main():
                 break
             else:
                 print("Invalid choice. Please enter 1 or 2.")
-                
+
+        #Check if the user wants to apply tactical OSD or metadata
+        while True:
+            print("\nSelect Metadata & Overlay Mode:")
+            print("1. Do nothing (Keep original metadata, no overlay)")
+            print("2. Burn tactical OSD overlay (Timestamp, watermark)")
+            print("3. Strip all metadata (Anti-forensics / Digital footprint wipe)")
+            osd_choice = input("Enter your choice (1-3): ").strip()
+            if osd_choice in ['1', '2', '3']:
+                osd_mode = int(osd_choice)
+                break
+            else:
+                print("Invalid choice. Please enter a number between 1 and 3.")
+
+        # Main menu loop
         while True:
             print("Select an option:")
             print("1. Process live camera feed")
@@ -214,11 +275,11 @@ def main():
             choice = input("Enter your choice (1-4): ").strip()
 
             if choice == '1':
-                process_live_camera(style)
+                process_live_camera(style, osd_mode)
             elif choice == '2':
-                process_video_preview(style)
+                process_video_preview(style, osd_mode)
             elif choice == '3':
-                process_video_export(style)
+                process_video_export(style, osd_mode)
             elif choice == '4':
                 print("Exiting the program.")
                 sys.exit(0)
