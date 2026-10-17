@@ -4,18 +4,15 @@ import urllib.request
 from ultralytics import YOLO
 
 
-#Path to the local model downloaded from Hugging Face.
 MODEL_PATH = "yolov8n-face.pt"
-MODEL_URL = "https://huggingface.co/deepghs/yolo-face/resolve/main/yolov8n-face/model.pt"
+if not os.path.exists(MODEL_PATH) and os.path.exists("yolov8m-face.pt"):
+    MODEL_PATH = "yolov8m-face.pt"
 
-# Check if the model file exists, if not, download it from Hugging Face
 if not os.path.exists(MODEL_PATH):
-    print("[INFO] Downloading YOLOv8-Face weights from Hugging Face...")
-    try:
-        urllib.request.urlretrieve(MODEL_URL, MODEL_PATH)
-        print("[SUCCESS] YOLOv8-Face weights downloaded successfully.")
-    except Exception as e:
-        print(f"[ERROR] Failed to download model weights: {e}")
+    raise FileNotFoundError(
+        f"[ERROR] Neither {MODEL_PATH} nor yolov8m-face.pt has been found. "
+        "Please run first 'startup.py', to download model."
+    )
 
 # Load the YOLOv8-Face model
 model = YOLO(MODEL_PATH)

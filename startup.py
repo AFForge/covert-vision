@@ -10,6 +10,7 @@ required_packages = [
     "moviepy",
     "soundfile",
     "pedalboard",
+    "gdown"
 ]
 
 
@@ -39,26 +40,12 @@ def install_dependencies():
         input("\n Press Enter to stop the process...")
         sys.exit(1)
 
-def download_file_from_gdrive(file_id, destination):
-
-    URL = "https://docs.google.com/uc?export=download"
-    session = urllib.request.urlopen(urllib.request.Request(f"{URL}&id={file_id}"))
-
-    token = None
-    for key, value in session.headers.items():
-        if key.lower() == "set-cookie" and "download_warning" in value:
-            token = value.split("download_warning=")[1].split(';')[0]
-            break
-
-    if token:
-        params = f"?export=download&confirm={token}&id={file_id}"
-        session = urllib.request.urlopen(urllib.request.Request(URL + params))
-
-    print(f"[INFO] Installing to {destination}...")
-    with open(destination, "wb") as f:
-        f.write(session.read())
-
 def setup_yolo_model():
+    try:
+        import gdown
+    except ImportError:
+        print("[ERROR] Nie udało się zaimportować biblioteki 'gdown'.")
+        return
     print("\n--- Choose AI model (YOLOv8-Face) ---")
     print("1. YOLOv8 Nano")
     print("2. Medium")
@@ -68,15 +55,13 @@ def setup_yolo_model():
         choice = "1"
         
     selected = models[choice]
-    model_path = selected["filename"]
-    
-    target_path = "yolov8n-face.pt"
+    target_path = selected["filename"]
     
     if not os.path.exists(target_path):
         print(f"[INFO] Choosen: {selected['name']}")
         try:
-            download_file_from_gdrive(selected["gdrive_id"], target_path)
-            print("[SUCCESS] Model was succesfully downloaded.")
+            gdown.download(selected["url"], target_path, quiet=False)
+            print("[SUCCESS] Model has been succesfully downloaded as", target_path)
         except Exception as e:
             print(f"[ERROR] The model could not be installed: {e}")
             print("[TIP] You can try to download yourself, if the problem will still exist.")
